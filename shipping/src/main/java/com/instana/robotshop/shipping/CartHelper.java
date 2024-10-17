@@ -1,5 +1,6 @@
 package com.instana.robotshop.shipping;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class CartHelper {
             if (res.getStatusLine().getStatusCode() == 200) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(res.getEntity().getContent()));
                 String line;
-                while ((line = in.readLine()) != null) {
+                while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
                     buffer.append(line);
                 }
             } else {
