@@ -1,5 +1,6 @@
 package com.instana.robotshop.shipping;
 
+import java.security.SecureRandom;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -68,7 +69,7 @@ public class ShippingServiceApplication implements WebMvcConfigurer {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-            SpanSupport.annotate("datacenter", DATA_CENTERS[new Random().nextInt(DATA_CENTERS.length)]);
+            SpanSupport.annotate("datacenter", DATA_CENTERS[new SecureRandom().nextInt(DATA_CENTERS.length)]);
 
             return super.preHandle(request, response, handler);
         }
