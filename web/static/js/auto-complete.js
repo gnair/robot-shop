@@ -120,7 +120,7 @@ var autoComplete = (function(){
                 if (data.length && val.length >= o.minChars) {
                     var s = '';
                     for (var i=0;i<data.length;i++) s += o.renderItem(data[i], val);
-                    that.sc.innerHTML = s;
+                    that.sc.innerText = s;
                     that.updateSC(0);
                 }
                 else
