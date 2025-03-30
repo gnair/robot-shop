@@ -1,9 +1,7 @@
 import os
-import random
 
 from locust import HttpUser, task, between
-from random import choice
-from random import randint
+import secrets
 
 class UserBehavior(HttpUser):
     wait_time = between(2, 10)
@@ -32,7 +30,7 @@ class UserBehavior(HttpUser):
 
     @task
     def login(self):
-        fake_ip = random.choice(self.fake_ip_addresses)
+        fake_ip = secrets.choice(self.fake_ip_addresses)
 
         credentials = {
                 'name': 'user',
@@ -44,7 +42,7 @@ class UserBehavior(HttpUser):
 
     @task
     def load(self):
-        fake_ip = random.choice(self.fake_ip_addresses)
+        fake_ip = secrets.choice(self.fake_ip_addresses)
 
         self.client.get('/', headers={'x-forwarded-for': fake_ip})
         user = self.client.get('/api/user/uniqueid', headers={'x-forwarded-for': fake_ip}).json()
@@ -57,25 +55,25 @@ class UserBehavior(HttpUser):
         for i in range(2):
             item = None
             while True:
-                item = choice(products)
+                item = secrets.choice(products)
                 if item['instock'] != 0:
                     break
 
             # vote for item
-            if randint(1, 10) <= 3:
-                self.client.put('/api/ratings/api/rate/{}/{}'.format(item['sku'], randint(1, 5)), headers={'x-forwarded-for': fake_ip})
+            if secrets.SystemRandom().randint(1, 10) <= 3:
+                self.client.put('/api/ratings/api/rate/{}/{}'.format(item['sku'], secrets.SystemRandom().randint(1, 5)), headers={'x-forwarded-for': fake_ip})
 
             self.client.get('/api/catalogue/product/{}'.format(item['sku']), headers={'x-forwarded-for': fake_ip})
             self.client.get('/api/ratings/api/fetch/{}'.format(item['sku']), headers={'x-forwarded-for': fake_ip})
             self.client.get('/api/cart/add/{}/{}/1'.format(uniqueid, item['sku']), headers={'x-forwarded-for': fake_ip})
 
         cart = self.client.get('/api/cart/cart/{}'.format(uniqueid), headers={'x-forwarded-for': fake_ip}).json()
-        item = choice(cart['items'])
+        item = secrets.choice(cart['items'])
         self.client.get('/api/cart/update/{}/{}/2'.format(uniqueid, item['sku']), headers={'x-forwarded-for': fake_ip})
 
         # country codes
-        code = choice(self.client.get('/api/shipping/codes', headers={'x-forwarded-for': fake_ip}).json())
-        city = choice(self.client.get('/api/shipping/cities/{}'.format(code['code']), headers={'x-forwarded-for': fake_ip}).json())
+        code = secrets.choice(self.client.get('/api/shipping/codes', headers={'x-forwarded-for': fake_ip}).json())
+        city = secrets.choice(self.client.get('/api/shipping/cities/{}'.format(code['code']), headers={'x-forwarded-for': fake_ip}).json())
         print('code {} city {}'.format(code, city))
         shipping = self.client.get('/api/shipping/calc/{}'.format(city['uuid']), headers={'x-forwarded-for': fake_ip}).json()
         shipping['location'] = '{} {}'.format(code['name'], city['name'])
@@ -89,7 +87,7 @@ class UserBehavior(HttpUser):
 
     @task
     def error(self):
-        fake_ip = random.choice(self.fake_ip_addresses)
+        fake_ip = secrets.choice(self.fake_ip_addresses)
         if os.environ.get('ERROR') == '1':
             print('Error request')
             cart = {'total': 0, 'tax': 0}
