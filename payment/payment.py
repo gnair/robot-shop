@@ -61,7 +61,7 @@ def pay(id):
 
     # check user exists
     try:
-        req = requests.get('http://{user}:8080/check/{id}'.format(user=USER, id=id))
+        req = requests.get('http://{user}:8080/check/{id}'.format(user=USER, id=id), timeout=60)
     except requests.exceptions.RequestException as err:
         app.logger.error(err)
         return str(err), 500
@@ -81,7 +81,7 @@ def pay(id):
 
     # dummy call to payment gateway, hope they dont object
     try:
-        req = requests.get(PAYMENT_GATEWAY)
+        req = requests.get(PAYMENT_GATEWAY, timeout=60)
         app.logger.info('{} returned {}'.format(PAYMENT_GATEWAY, req.status_code))
     except requests.exceptions.RequestException as err:
         app.logger.error(err)
@@ -105,7 +105,7 @@ def pay(id):
         try:
             req = requests.post('http://{user}:8080/order/{id}'.format(user=USER, id=id),
                     data=json.dumps({'orderid': orderid, 'cart': cart}),
-                    headers={'Content-Type': 'application/json'})
+                    headers={'Content-Type': 'application/json'}, timeout=60)
             app.logger.info('order history returned {}'.format(req.status_code))
         except requests.exceptions.RequestException as err:
             app.logger.error(err)
@@ -113,7 +113,7 @@ def pay(id):
 
     # delete cart
     try:
-        req = requests.delete('http://{cart}:8080/cart/{id}'.format(cart=CART, id=id));
+        req = requests.delete('http://{cart}:8080/cart/{id}'.format(cart=CART, id=id), timeout=60);
         app.logger.info('cart delete returned {}'.format(req.status_code))
     except requests.exceptions.RequestException as err:
         app.logger.error(err)
