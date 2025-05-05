@@ -17,6 +17,7 @@ from rabbitmq import Publisher
 # Prometheus
 import prometheus_client
 from prometheus_client import Counter, Histogram
+from security import safe_requests
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
@@ -61,7 +62,7 @@ def pay(id):
 
     # check user exists
     try:
-        req = requests.get('http://{user}:8080/check/{id}'.format(user=USER, id=id))
+        req = safe_requests.get('http://{user}:8080/check/{id}'.format(user=USER, id=id))
     except requests.exceptions.RequestException as err:
         app.logger.error(err)
         return str(err), 500
@@ -81,7 +82,7 @@ def pay(id):
 
     # dummy call to payment gateway, hope they dont object
     try:
-        req = requests.get(PAYMENT_GATEWAY)
+        req = safe_requests.get(PAYMENT_GATEWAY)
         app.logger.info('{} returned {}'.format(PAYMENT_GATEWAY, req.status_code))
     except requests.exceptions.RequestException as err:
         app.logger.error(err)
