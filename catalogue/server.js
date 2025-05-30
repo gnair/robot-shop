@@ -70,10 +70,12 @@ app.get('/products', (req, res) => {
             res.json(products);
         }).catch((e) => {
             req.log.error('ERROR', e);
+            res.status(500).set("Content-Type", "text/plain");
             res.status(500).send(e);
         });
     } else {
         req.log.error('database not available');
+        res.status(500).set("Content-Type", "text/plain");
         res.status(500).send('database not avaiable');
     }
 });
@@ -89,15 +91,18 @@ app.get('/product/:sku', (req, res) => {
             if(product) {
                 res.json(product);
             } else {
+                res.status(404).set("Content-Type", "text/plain");
                 res.status(404).send('SKU not found');
             }
         }).catch((e) => {
             req.log.error('ERROR', e);
+            res.status(500).set("Content-Type", "text/plain");
             res.status(500).send(e);
         });
         }, delay);
     } else {
         req.log.error('database not available');
+        res.status(500).set("Content-Type", "text/plain");
         res.status(500).send('database not available');
     }
 });
@@ -109,14 +114,17 @@ app.get('/products/:cat', (req, res) => {
             if(products) {
                 res.json(products);
             } else {
+                res.status(404).set("Content-Type", "text/plain");
                 res.status(404).send('No products for ' + req.params.cat);
             }
         }).catch((e) => {
             req.log.error('ERROR', e);
+            res.status(500).set("Content-Type", "text/plain");
             res.status(500).send(e);
         });
     } else {
         req.log.error('database not available');
+        res.status(500).set("Content-Type", "text/plain");
         res.status(500).send('database not avaiable');
     }
 });
@@ -128,10 +136,12 @@ app.get('/categories', (req, res) => {
             res.json(categories);
         }).catch((e) => {
             req.log.error('ERROR', e);
+            res.status(500).set("Content-Type", "text/plain");
             res.status(500).send(e);
         });
     } else {
         req.log.error('database not available');
+        res.status(500).set("Content-Type", "text/plain");
         res.status(500).send('database not available');
     }
 });
@@ -143,10 +153,12 @@ app.get('/search/:text', (req, res) => {
             res.json(hits);
         }).catch((e) => {
             req.log.error('ERROR', e);
+            res.status(500).set("Content-Type", "text/plain");
             res.status(500).send(e);
         });
     } else {
         req.log.error('database not available');
+        res.status(500).set("Content-Type", "text/plain");
         res.status(500).send('database not available');
     }
 });
