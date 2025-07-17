@@ -24,10 +24,10 @@ const counter = new promClient.Counter({
 });
 
 
-var redisConnected = false;
+let redisConnected = false;
 
-var redisHost = process.env.REDIS_HOST || 'redis'
-var catalogueHost = process.env.CATALOGUE_HOST || 'catalogue'
+const redisHost = process.env.REDIS_HOST || 'redis';
+const catalogueHost = process.env.CATALOGUE_HOST || 'catalogue';
 
 const logger = pino({
     level: 'info',
@@ -66,7 +66,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get('/health', (req, res) => {
-    var stat = {
+    const stat = {
         app: 'OK',
         redis: redisConnected
     };
@@ -123,7 +123,7 @@ app.get('/rename/:from/:to', (req, res) => {
             if(data == null) {
                 res.status(404).send('cart not found');
             } else {
-                var cart = JSON.parse(data);
+                const cart = JSON.parse(data);
                 saveCart(req.params.to, cart).then((data) => {
                     res.json(cart);
                 }).catch((err) => {
@@ -138,7 +138,7 @@ app.get('/rename/:from/:to', (req, res) => {
 // update/create cart
 app.get('/add/:id/:sku/:qty', (req, res) => {
     // check quantity
-    var qty = parseInt(req.params.qty);
+    const qty = parseInt(req.params.qty);
     if(isNaN(qty)) {
         req.log.warn('quantity not a number');
         res.status(400).send('quantity must be a number');
@@ -167,7 +167,7 @@ app.get('/add/:id/:sku/:qty', (req, res) => {
                 req.log.error('ERROR', err);
                 res.status(500).send(err);
             } else {
-                var cart;
+                let cart;
                 if(data == null) {
                     // create new cart
                     cart = {
@@ -180,14 +180,14 @@ app.get('/add/:id/:sku/:qty', (req, res) => {
                 }
                 req.log.info('got cart', cart);
                 // add sku to cart
-                var item = {
+                const item = {
                     qty: qty,
                     sku: req.params.sku,
                     name: product.name,
                     price: product.price,
                     subtotal: qty * product.price
                 };
-                var list = mergeList(cart.items, item, qty);
+                const list = mergeList(cart.items, item, qty);
                 cart.items = list;
                 cart.total = calcTotal(cart.items);
                 // work out tax
@@ -212,7 +212,7 @@ app.get('/add/:id/:sku/:qty', (req, res) => {
 // update quantity - remove item when qty == 0
 app.get('/update/:id/:sku/:qty', (req, res) => {
     // check quantity
-    var qty = parseInt(req.params.qty);
+    const qty = parseInt(req.params.qty);
     if(isNaN(qty)) {
         req.log.warn('quanity not a number');
         res.status(400).send('quantity must be a number');
@@ -232,9 +232,9 @@ app.get('/update/:id/:sku/:qty', (req, res) => {
             if(data == null) {
                 res.status(404).send('cart not found');
             } else {
-                var cart = JSON.parse(data);
-                var idx;
-                var len = cart.items.length;
+                const cart = JSON.parse(data);
+                const idx;
+                const len = cart.items.length;
                 for(idx = 0; idx < len; idx++) {
                     if(cart.items[idx].sku == req.params.sku) {
                         break;
@@ -267,7 +267,7 @@ app.get('/update/:id/:sku/:qty', (req, res) => {
 
 // add shipping
 app.post('/shipping/:id', (req, res) => {
-    var shipping = req.body;
+    const shipping = req.body;
     if(shipping.distance === undefined || shipping.cost === undefined || shipping.location == undefined) {
         req.log.warn('shipping data missing', shipping);
         res.status(400).send('shipping data missing');
@@ -282,8 +282,8 @@ app.post('/shipping/:id', (req, res) => {
                     req.log.info('no cart for', req.params.id);
                     res.status(404).send('cart not found');
                 } else {
-                    var cart = JSON.parse(data);
-                    var item = {
+                    const cart = JSON.parse(data);
+                    const item = {
                         qty: 1,
                         sku: 'SHIP',
                         name: 'shipping to ' + shipping.location,
@@ -291,8 +291,8 @@ app.post('/shipping/:id', (req, res) => {
                         subtotal: shipping.cost
                     };
                     // check shipping already in the cart
-                    var idx;
-                    var len = cart.items.length;
+                    let idx;
+                    const len = cart.items.length;
                     for(idx = 0; idx < len; idx++) {
                         if(cart.items[idx].sku == item.sku) {
                             break;
@@ -322,10 +322,10 @@ app.post('/shipping/:id', (req, res) => {
 });
 
 function mergeList(list, product, qty) {
-    var inlist = false;
+    let inlist = false;
     // loop through looking for sku
-    var idx;
-    var len = list.length;
+    const idx;
+    const len = list.length;
     for(idx = 0; idx < len; idx++) {
         if(list[idx].sku == product.sku) {
             inlist = true;
@@ -344,8 +344,8 @@ function mergeList(list, product, qty) {
 }
 
 function calcTotal(list) {
-    var total = 0;
-    for(var idx = 0, len = list.length; idx < len; idx++) {
+    let total = 0;
+    for(const idx = 0, len = list.length; idx < len; idx++) {
         total += list[idx].subtotal;
     }
 
@@ -387,7 +387,7 @@ function saveCart(id, cart) {
 }
 
 // connect to Redis
-var redisClient = redis.createClient({
+const redisClient = redis.createClient({
     host: redisHost
 });
 

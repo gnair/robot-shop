@@ -19,7 +19,7 @@ const expPino = require('express-pino-logger');
 var db;
 var usersCollection;
 var ordersCollection;
-var mongoConnected = false;
+let mongoConnected = false;
 
 const logger = pino({
     level: 'info',
@@ -59,7 +59,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get('/health', (req, res) => {
-    var stat = {
+    const stat = {
         app: 'OK',
         mongo: mongoConnected
     };
@@ -194,7 +194,7 @@ app.post('/order/:id', (req, res) => {
                     name: req.params.id
                 }).then((history) => {
                     if(history) {
-                        var list = history.history;
+                        let list = history.history;
                         list.push(req.body);
                         ordersCollection.updateOne(
                             { name: req.params.id },
@@ -255,7 +255,7 @@ app.get('/history/:id', (req, res) => {
 });
 
 // connect to Redis
-var redisClient = redis.createClient({
+const redisClient = redis.createClient({
     host: process.env.REDIS_HOST || 'redis'
 });
 
@@ -269,7 +269,7 @@ redisClient.on('ready', (r) => {
 // set up Mongo
 function mongoConnect() {
     return new Promise((resolve, reject) => {
-        var mongoURL = process.env.MONGO_URL || 'mongodb://mongodb:27017/users';
+        const mongoURL = process.env.MONGO_URL || 'mongodb://mongodb:27017/users';
         mongoClient.connect(mongoURL, (error, client) => {
             if(error) {
                 reject(error);

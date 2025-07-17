@@ -24,9 +24,9 @@ const expLogger = expPino({
 });
 
 // MongoDB
-var db;
-var collection;
-var mongoConnected = false;
+let db;
+let collection;
+let mongoConnected = false;
 
 const app = express();
 
@@ -56,7 +56,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get('/health', (req, res) => {
-    var stat = {
+    const stat = {
         app: 'OK',
         mongo: mongoConnected
     };
@@ -154,7 +154,7 @@ app.get('/search/:text', (req, res) => {
 // set up Mongo
 function mongoConnect() {
     return new Promise((resolve, reject) => {
-        var mongoURL = process.env.MONGO_URL || 'mongodb://mongodb:27017/catalogue';
+        const mongoURL = process.env.MONGO_URL || 'mongodb://mongodb:27017/catalogue';
         mongoClient.connect(mongoURL, (error, client) => {
             if(error) {
                 reject(error);

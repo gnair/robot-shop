@@ -1,11 +1,11 @@
 (function(angular) {
     'use strict';
 
-    var robotshop = angular.module('robotshop', ['ngRoute'])
+    const robotshop = angular.module('robotshop', ['ngRoute']);
 
     // Share user between controllers
     robotshop.factory('currentUser', function() {
-        var data = {
+        const data = {
             uniqueid: '',
             user: {},
             cart: {
@@ -184,7 +184,7 @@
             }
         }
 
-        var text = $routeParams.text;
+        const text = $routeParams.text;
         console.log('search init with', text);
         search(text);
     });
@@ -198,7 +198,7 @@
         $scope.data.quantity = 1;
 
         $scope.addToCart = function() {
-            var url = '/api/cart/add/' + currentUser.uniqueid + '/' + $scope.data.product.sku + '/' + $scope.data.quantity;
+            const url = '/api/cart/add/' + currentUser.uniqueid + '/' + $scope.data.product.sku + '/' + $scope.data.quantity;
             console.log('addToCart', url);
             $http({
                 url: url,
@@ -217,7 +217,7 @@
 
         $scope.rateProduct = function(score) {
             console.log('rate product', $scope.data.product.sku, score);
-            var url = '/api/ratings/api/rate/' + $scope.data.product.sku + '/' + score;
+            const url = '/api/ratings/api/rate/' + $scope.data.product.sku + '/' + score;
             $http({
                 url: url,
                 method: 'PUT'
@@ -232,7 +232,7 @@
         
         $scope.glowstan = function(vote, val) {
             console.log('glowstan', vote);
-            var idx = vote;
+            let idx = vote;
             while(idx > 0) {
                 document.getElementById('vote-' + idx).style.opacity = val;
                 idx--;
@@ -282,7 +282,7 @@
         
         $scope.change = function(sku, qty) {
             // update the cart
-            var url = '/api/cart/update/' + $scope.data.uniqueid + '/' + sku + '/' + qty;
+            const url = '/api/cart/update/' + $scope.data.uniqueid + '/' + sku + '/' + qty;
             console.log('change', url);
             $http({
                 url: url,
@@ -300,7 +300,7 @@
                 url: '/api/cart/cart/' + id,
                 method: 'GET'
             }).then((res) => {
-                var cart = res.data;
+                const cart = res.data;
                 // remove shipping - last item in cart
                 if(cart.items[cart.items.length - 1].sku == 'SHIP') {
                     $http({
@@ -375,8 +375,8 @@
         };
 
         // auto-complete
-        var autoLocation;
-        var uuid;
+        let autoLocation;
+        let uuid;
 
         function loadCodes() {
             $http({
@@ -479,7 +479,7 @@
                     password: $scope.data.password
                 }
             }).then((res) => {
-                var oldId = currentUser.uniqueid;
+                const oldId = currentUser.uniqueid;
                 $scope.data.user = res.data;
                 $scope.data.user.password = '';
                 $scope.data.password = $scope.data.password2 = '';
